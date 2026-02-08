@@ -1,251 +1,1305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chronomètre Vitesse</title>
-    <style>
-        /* Styles de base */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            color: #333;
-        }
-        #timer-display {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        #input-controls, #timer-controls {
-            margin-top: 20px;
-        }
-        #input-controls label {
-            margin: 5px;
-        }
-        #input-controls input {
-            margin: 5px;
-            padding: 10px; /* Augmente l'espace à l'intérieur de l'input */
-            font-size: 1.2em; /* Agrandit la police */
-            width: 120px; /* Largeur d'entrée accrue */
-        }
-        /* Styles des boutons */
-        #timer-controls button {
-            padding: 0;
-            font-size: 14px;
-            font-weight: bold;
-            width: 80px; /* Taille légèrement augmentée */
-            height: 80px; /* Taille légèrement augmentée */
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%; /* Garder les boutons ronds */
-            margin: 5px; /* Espacement entre les boutons */
-        }
-        #start-button {
-            background-color: #008CBA; /* Bleu */
-        }
-        #intermediate-button {
-            background-color: #4CAF50; /* Vert */
-        }
-        #stop-button {
-            background-color: #f44336; /* Rouge */
-        }
-        #reset-button {
-            background-color: #f44336; /* Rouge */
-            border-radius: 5px; /* Bord arrondi pour réinitialiser */
-            padding: 10px 20px;
-            margin-top: 10px;
-        }
-        #download-button {
-            background-color: #FF9800; /* Orange */
-            border-radius: 5px;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        #results {
-            margin-top: 20px;
-            width: 80%;
-            max-width: 400px;
-        }
-        #results ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #results li {
-            background: #e0e0e0;
-            margin-bottom: 5px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .final-result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            background-color: #D0E8FF;
-            color: #333;
-            font-weight: bold;
-        }
-        .last-time {
-            border: 2px solid blue; /* Encadrer le dernier temps */
-        }
-        #creator {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.9em;
-        }
-        #creator a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0b1220"/>
+  <title>RallyTrack — Montée/Descente</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#121b2e; --card2:#0f1728; --txt:#e8eefc; --muted:#a9b7dd;
+      --accent:#66e3ff; --accent2:#9bff8a; --danger:#ff6b6b; --warn:#ffd166;
+      --stroke: rgba(255,255,255,.10);
+      --radius: 18px;
+      --pad: 14px;
+      --tap: 46px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--sans); background: radial-gradient(1200px 700px at 20% -10%, rgba(102,227,255,.18), transparent),
+      radial-gradient(900px 500px at 110% 20%, rgba(155,255,138,.12), transparent),
+      var(--bg);
+      color:var(--txt);
+      -webkit-font-smoothing:antialiased;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .app{max-width:1100px;margin:0 auto;padding:16px 16px 90px}
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:10px 6px 16px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .brand .title{font-size:20px;font-weight:800;letter-spacing:.3px}
+    .brand .sub{color:var(--muted); font-size:13px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      padding:8px 12px; border-radius:999px;
+      box-shadow: var(--shadow);
+    }
+    .pill b{font-family:var(--mono); font-size:13px}
+    .grid{display:grid; gap:14px}
+    @media(min-width:980px){ .grid.cols2{grid-template-columns:1.2fr .8fr} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.12);
+    }
+    .card .hd h2{margin:0;font-size:16px}
+    .card .bd{padding:14px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .row.nowrap{flex-wrap:nowrap}
+    .spacer{flex:1}
+    .muted{color:var(--muted)}
+    .btn{
+      min-height:var(--tap);
+      padding:10px 14px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      font-weight:700;
+      letter-spacing:.2px;
+      cursor:pointer;
+      touch-action: manipulation;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(102,227,255,.22), rgba(102,227,255,.08));
+      border-color: rgba(102,227,255,.35);
+    }
+    .btn.good{
+      background: linear-gradient(135deg, rgba(155,255,138,.22), rgba(155,255,138,.08));
+      border-color: rgba(155,255,138,.35);
+    }
+    .btn.danger{
+      background: linear-gradient(135deg, rgba(255,107,107,.22), rgba(255,107,107,.08));
+      border-color: rgba(255,107,107,.35);
+    }
+    .btn:active{transform: translateY(1px)}
+    .seg{
+      display:flex; gap:8px; background:rgba(255,255,255,.04);
+      border:1px solid var(--stroke);
+      border-radius: 16px;
+      padding:6px;
+    }
+    .seg button{
+      min-height:40px; padding:8px 12px; border-radius:12px;
+      border:1px solid transparent; background:transparent; color:var(--muted);
+      font-weight:800; cursor:pointer;
+    }
+    .seg button.active{
+      background: rgba(102,227,255,.16);
+      border-color: rgba(102,227,255,.25);
+      color: var(--txt);
+    }
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    textarea, input, select{
+      width:100%; min-height:44px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      color: var(--txt);
+      padding:10px 12px;
+      font-size:15px;
+      outline:none;
+    }
+    textarea{min-height:160px; resize:vertical; line-height:1.35}
+    .hint{font-size:12px;color:var(--muted); margin-top:6px}
+    .courtList{display:grid; gap:10px}
+    .court{
+      background: rgba(0,0,0,.14);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding:12px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .courtTop{display:flex; align-items:center; gap:10px}
+    .courtTop .name{font-weight:900}
+    .tag{
+      font-size:12px; padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+    }
+    .switch{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .switch input{width:22px;height:22px}
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media(max-width:520px){ .two{grid-template-columns:1fr} }
+    .score{
+      display:flex; gap:10px; align-items:center;
+    }
+    .score input{width:90px; text-align:center; font-family:var(--mono); font-weight:900; font-size:16px}
+    .mini{font-size:12px;color:var(--muted)}
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .table th,.table td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+    }
+    .table th{color:var(--muted); text-align:left; background: rgba(0,0,0,.14)}
+    .table tr:last-child td{border-bottom:none}
+    .rank{font-family:var(--mono); font-weight:900}
+    .clickRow{cursor:pointer}
+    .clickRow:active{transform:translateY(1px)}
+    .nav{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(9,14,26,.72);
+      backdrop-filter: blur(14px);
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    .navInner{
+      max-width:1100px; margin:0 auto;
+      display:flex; gap:10px; justify-content:space-between;
+    }
+    .navBtn{
+      flex:1;
+      min-height:50px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .navBtn.active{
+      background: rgba(102,227,255,.14);
+      border-color: rgba(102,227,255,.26);
+      color: var(--txt);
+    }
+    .modal{
+      position:fixed; inset:0; display:none;
+      background: rgba(0,0,0,.55);
+      padding:14px;
+      z-index:50;
+    }
+    .modal.open{display:flex; align-items:flex-end}
+    @media(min-width:720px){ .modal.open{align-items:center; justify-content:center} }
+    .sheet{
+      width:100%; max-width:860px;
+      background: linear-gradient(180deg, rgba(18,27,46,.98), rgba(12,18,32,.98));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .sheet .hd{padding:14px; display:flex; align-items:center; gap:10px; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.08)}
+    .sheet .bd{padding:14px; max-height:70vh; overflow:auto}
+    canvas{max-width:100%}
+    .kpi{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    @media(max-width:720px){ .kpi{grid-template-columns:repeat(2,1fr)} }
+    .kpi .box{
+      padding:12px; border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .kpi .box .v{font-family:var(--mono); font-weight:900; font-size:18px}
+    .kpi .box .l{font-size:12px; color:var(--muted)}
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:90px; z-index:60;
+      background: rgba(0,0,0,.75);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--txt);
+      padding:10px 14px;
+      border-radius:999px;
+      display:none;
+    }
+    .toast.show{display:block}
+  </style>
 </head>
 <body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="title">RallyTrack</div>
+        <div class="sub">Gestion montée/descente — badminton (iPad, hors-ligne)</div>
+      </div>
+      <div class="pill" title="Tout est enregistré localement sur l'iPad">
+        <span class="muted">Tournoi :</span> <b id="tournamentName">Évaluation Bac</b>
+      </div>
+    </header>
 
-    <h1>Chronomètre Vitesse</h1>
+    <!-- PAGE: ACCUEIL -->
+    <section id="page-home" class="grid cols2">
+      <div class="card">
+        <div class="hd">
+          <h2>Page de garde</h2>
+          <button class="btn primary" id="btnQuickStart">Démarrer / Reprendre</button>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div style="flex:1">
+              <label>Nom de la séance / tournoi</label>
+              <input id="inpTournament" placeholder="Ex: Bac badminton — 8 février" />
+              <div class="hint">Ce nom apparaît dans l’export CSV.</div>
+            </div>
+          </div>
 
-    <div id="input-controls">
-        <label for="total-distance">Distance Totale (m) :</label>
-        <input type="number" id="total-distance" value="800">
-        <label for="intermediate-distance">Distance Intermédiaire (m) :</label>
-        <input type="number" id="intermediate-distance" value="200">
+          <div class="row" style="margin-top:12px">
+            <button class="btn danger" id="btnResetAll">Réinitialiser (efface tout)</button>
+            <div class="spacer"></div>
+            <button class="btn" id="btnInstallTip">Astuces iPad</button>
+          </div>
+
+          <div class="card" style="margin-top:14px; background:rgba(0,0,0,.12)">
+            <div class="bd">
+              <div style="font-weight:900;margin-bottom:6px">Flux conseillé en gymnase</div>
+              <div class="muted" style="line-height:1.35">
+                1) <b>Saisie</b> : colle la liste des élèves + choisis 8–12 terrains + règles par terrain.<br>
+                2) <b>Matchs</b> : sélection rapide joueurs + score → Enregistrer.<br>
+                3) <b>Bilan</b> : classement + fiche joueur + graphique perf + export CSV (Numbers).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHRONO -->
+      <div class="card">
+        <div class="hd">
+          <h2>Chrono</h2>
+          <div class="pill"><span class="muted">Match :</span> <b id="timerDisplay">00:00</b></div>
+        </div>
+        <div class="bd">
+          <div class="two">
+            <div>
+              <label>Durée (minutes)</label>
+              <input id="timerMinutes" type="number" min="0" value="5" />
+              <div class="hint">Ex : 4–6 min/match en rotation rapide.</div>
+            </div>
+            <div>
+              <label>Signal fin</label>
+              <select id="timerBeep">
+                <option value="1">Bip</option>
+                <option value="0">Silencieux</option>
+              </select>
+              <div class="hint">Le bip nécessite un premier clic (iOS).</div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn good" id="timerStart">Start</button>
+            <button class="btn" id="timerPause">Pause</button>
+            <button class="btn" id="timerReset">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: SAISIE -->
+    <section id="page-setup" style="display:none" class="grid cols2">
+      <div class="card">
+        <div class="hd">
+          <h2>Saisie — classe & configuration</h2>
+          <button class="btn primary" id="btnSaveSetup">Enregistrer</button>
+        </div>
+        <div class="bd">
+          <label>Liste des élèves (1 par ligne)</label>
+          <textarea id="taStudents" placeholder="Ex:
+Alice
+Baptiste
+Camille
+..."></textarea>
+          <div class="hint">Astuce : tu peux coller depuis un tableau ou un document.</div>
+
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label>Nombre de terrains (8 à 12)</label>
+              <input id="inpCourts" type="number" min="8" max="12" value="8"/>
+              <div class="hint">Double possible seulement sur les 2 terrains centraux.</div>
+            </div>
+            <div>
+              <label>Nom des 2 terrains centraux</label>
+              <input id="inpCenterNames" value="Centre 1, Centre 2"/>
+              <div class="hint">Format : “Centre 1, Centre 2”.</div>
+            </div>
+          </div>
+
+          <label style="margin-top:14px">Règles par terrain</label>
+          <div class="hint">Tu peux décider <b>terrain par terrain</b> : simple/double + avec/sans arbitre.</div>
+          <div id="courtConfig" class="courtList" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <h2>Outils rapides</h2>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <button class="btn" id="btnAutoSingles">Tout en simple</button>
+            <button class="btn" id="btnCenterDoubles">Double sur les 2 centraux</button>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="btnNoUmpires">Sans arbitre partout</button>
+            <button class="btn" id="btnYesUmpires">Avec arbitre partout</button>
+          </div>
+
+          <div class="card" style="margin-top:14px; background:rgba(0,0,0,.12)">
+            <div class="bd">
+              <div style="font-weight:900;margin-bottom:6px">Conseil évaluation bac</div>
+              <div class="muted" style="line-height:1.35">
+                Active “avec arbitre” sur certains terrains pour responsabiliser et gagner du temps.
+                L’appli garde la trace : ça aide pour justifier ton organisation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: MATCHS -->
+    <section id="page-matches" style="display:none">
+      <div class="card">
+        <div class="hd">
+          <h2>Matchs — saisie des scores</h2>
+          <div class="row">
+            <button class="btn" id="btnUndoLast">Annuler dernier match</button>
+            <button class="btn primary" id="btnNewRound">Nouvelle “rotation” (optionnel)</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div id="courtsLive" class="courtList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: BILAN -->
+    <section id="page-results" style="display:none" class="grid cols2">
+      <div class="card">
+        <div class="hd">
+          <h2>Bilan — classement</h2>
+          <div class="row">
+            <button class="btn" id="btnExport">Exporter CSV</button>
+          </div>
+        </div>
+        <div class="bd">
+          <table class="table" id="tblRanking">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Élève</th>
+                <th>Perf</th>
+                <th>V-D</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="hint" style="margin-top:10px">
+            <b>Perf</b> = indice type ELO (plus c’est haut, plus la perf du tournoi est bonne).
+            Clique un élève pour voir sa fiche + graphique.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <h2>Résumé</h2>
+        </div>
+        <div class="bd">
+          <div class="kpi">
+            <div class="box"><div class="v" id="kpiStudents">0</div><div class="l">Élèves</div></div>
+            <div class="box"><div class="v" id="kpiMatches">0</div><div class="l">Matchs enregistrés</div></div>
+            <div class="box"><div class="v" id="kpiCourts">0</div><div class="l">Terrains</div></div>
+            <div class="box"><div class="v" id="kpiLast">—</div><div class="l">Dernier match</div></div>
+          </div>
+
+          <div class="card" style="margin-top:14px; background:rgba(0,0,0,.12)">
+            <div class="bd">
+              <div style="font-weight:900;margin-bottom:6px">Export Numbers</div>
+              <div class="muted" style="line-height:1.35">
+                Appuie sur “Exporter CSV” → tu récupères 3 fichiers CSV.
+                Dans Numbers : <b>Importer</b> → choisis le CSV (séparateur “,”).
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="navInner">
+      <button class="navBtn active" data-nav="home">Accueil</button>
+      <button class="navBtn" data-nav="setup">Saisie</button>
+      <button class="navBtn" data-nav="matches">Matchs</button>
+      <button class="navBtn" data-nav="results">Bilan</button>
     </div>
+  </div>
 
-    <div id="timer-display">00:00:00</div>
+  <!-- MODAL JOUEUR -->
+  <div class="modal" id="playerModal" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <div class="hd">
+        <div>
+          <div style="font-weight:900" id="pmName">Élève</div>
+          <div class="muted" id="pmSub">Détails</div>
+        </div>
+        <button class="btn" id="pmClose">Fermer</button>
+      </div>
+      <div class="bd">
+        <div class="kpi" style="margin-bottom:12px">
+          <div class="box"><div class="v" id="pmPerf">—</div><div class="l">Indice perf</div></div>
+          <div class="box"><div class="v" id="pmVD">—</div><div class="l">Victoires-Défaites</div></div>
+          <div class="box"><div class="v" id="pmPts">—</div><div class="l">Points +/-</div></div>
+          <div class="box"><div class="v" id="pmRate">—</div><div class="l">% victoires</div></div>
+        </div>
 
-    <div id="timer-controls">
-        <button id="start-button">Démarrer</button>
-        <button id="intermediate-button">Tour</button>
-        <button id="stop-button">Stop</button>
-        <button id="reset-button">Réinitialiser</button>
-        <button id="download-button">Télécharger</button>
+        <div class="card" style="background:rgba(0,0,0,.12); margin-bottom:12px">
+          <div class="bd">
+            <div style="font-weight:900;margin-bottom:8px">Évolution perf (match après match)</div>
+            <canvas id="pmChart" width="900" height="260"></canvas>
+            <div class="hint">Courbe : indice perf recalculé après chaque match.</div>
+          </div>
+        </div>
+
+        <div style="font-weight:900;margin:8px 0 8px">Fiche de matchs</div>
+        <div id="pmMatches"></div>
+      </div>
     </div>
+  </div>
 
-    <div id="results">
-        <h3>Temps Intermédiaires</h3>
-        <ul id="time-list"></ul>
-        <p id="final-result" class="final-result"></p>
-    </div>
+  <div class="toast" id="toast"></div>
 
-    <div id="creator">
-        <p>Créé par Jérôme BARLETTA</p>
-        <a href="http://bjerome.eklablog.com/accueil-c30088056" target="_blank">Accéder au blog</a>
-    </div>
+<script>
+/** =========================
+ * RallyTrack — local-first
+ * ========================= */
 
-    <script>
-        let startTime = null;
-        let intervalId = null;
-        let intermediateTimes = [];
-        let totalDistance = 800;
-        let intermediateDistance = 200;
-        let currentDistance = 0;
+const STORE_KEY = "rallytrack.v1";
 
-        const timerDisplay = document.getElementById('timer-display');
-        const timeList = document.getElementById('time-list');
-        const finalResult = document.getElementById('final-result');
+const defaultState = () => ({
+  tournamentName: "Évaluation Bac",
+  students: [], // {id, name}
+  courts: [],   // {id, name, allowDoubles, mode:'S'|'D', umpire:false}
+  matches: [],  // {id, ts, courtId, mode, umpire, teamA:[sid], teamB:[sid], scoreA, scoreB, round}
+  round: 1,
+});
 
-        const startButton = document.getElementById('start-button');
-        const intermediateButton = document.getElementById('intermediate-button');
-        const stopButton = document.getElementById('stop-button');
-        const resetButton = document.getElementById('reset-button');
-        const downloadButton = document.getElementById('download-button');
+let state = loadState();
+let timer = { running:false, endAt:null, remainingMs:0, lastTick:null };
 
-        const totalDistanceInput = document.getElementById('total-distance');
-        const intermediateDistanceInput = document.getElementById('intermediate-distance');
+function uid(prefix="id"){
+  return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+}
 
-        // Événements pour les inputs
-        totalDistanceInput.addEventListener('input', () => {
-            totalDistance = parseInt(totalDistanceInput.value);
-        });
+function saveState(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  renderAll();
+}
 
-        intermediateDistanceInput.addEventListener('input', () => {
-            intermediateDistance = parseInt(intermediateDistanceInput.value);
-        });
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  }catch(e){
+    return defaultState();
+  }
+}
 
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 1600);
+}
 
-        function calculateSpeed(timeInSeconds, distance) {
-            if (timeInSeconds === 0) return 0;
-            return ((distance / timeInSeconds) * 3.6).toFixed(2);
-        }
+/** ====== Navigation ====== */
+const pages = ["home","setup","matches","results"];
+function showPage(name){
+  pages.forEach(p=>{
+    document.getElementById("page-"+p).style.display = (p===name) ? "" : "none";
+  });
+  document.querySelectorAll(".navBtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.nav===name);
+  });
+  renderAll();
+}
 
-        function updateTimer() {
-            const elapsed = Math.floor((new Date() - startTime) / 1000);
-            timerDisplay.textContent = formatTime(elapsed);
-        }
+document.querySelectorAll(".navBtn").forEach(b=>{
+  b.addEventListener("click", ()=>showPage(b.dataset.nav));
+});
 
-        startButton.addEventListener('click', () => {
-            if (!intervalId) {
-                startTime = new Date();
-                intervalId = setInterval(updateTimer, 1000);
-                currentDistance = 0;
-                intermediateTimes = [];
-                timeList.innerHTML = '';
-                finalResult.textContent = '';
-            }
-        });
+/** ====== Accueil ====== */
+const inpTournament = document.getElementById("inpTournament");
+const tournamentNameEl = document.getElementById("tournamentName");
 
-        intermediateButton.addEventListener('click', () => {
-            if (intervalId && currentDistance + intermediateDistance <= totalDistance) {
-                const now = new Date();
-                const elapsed = Math.floor((now - startTime) / 1000);
-                currentDistance += intermediateDistance;
+document.getElementById("btnQuickStart").addEventListener("click", ()=>{
+  // si rien n'est configuré, va en saisie
+  if(state.students.length===0 || state.courts.length===0) showPage("setup");
+  else showPage("matches");
+});
 
-                const speed = calculateSpeed(elapsed, currentDistance);
-                const timeEntry = document.createElement('li');
+document.getElementById("btnResetAll").addEventListener("click", ()=>{
+  if(confirm("Effacer TOUTES les données (élèves, matchs, réglages) ?")){
+    state = defaultState();
+    saveState();
+    toast("Réinitialisé");
+  }
+});
 
-                // Ajouter la différence avec le précédent
-                if (intermediateTimes.length > 0) {
-                    const lastEntry = intermediateTimes[intermediateTimes.length - 1];
-                    const timeDifference = elapsed - lastEntry.elapsed;
-                    const speedDifference = speed - lastEntry.speed;
+document.getElementById("btnInstallTip").addEventListener("click", ()=>{
+  alert("iPad : Safari → bouton Partager → “Sur l’écran d’accueil”.\nEnsuite l’appli fonctionne plein écran et garde tes données (offline).");
+});
 
-                    timeEntry.textContent = `Distance: ${currentDistance}m - Temps: ${formatTime(elapsed)} - Vitesse: ${speed} km/h (ΔTemps: ${timeDifference >= 0 ? '+' : ''}${timeDifference} s, ΔVitesse: ${speedDifference.toFixed(2) >= 0 ? '+' : ''}${speedDifference.toFixed(2)} km/h)`;
-                } else {
-                    timeEntry.textContent = `Distance: ${currentDistance}m - Temps: ${formatTime(elapsed)} - Vitesse: ${speed} km/h`;
-                }
+inpTournament.addEventListener("input", ()=>{
+  state.tournamentName = inpTournament.value.trim() || "Évaluation Bac";
+  tournamentNameEl.textContent = state.tournamentName;
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+});
 
-                timeList.appendChild(timeEntry);
-                intermediateTimes.push({
-                    distance: currentDistance,
-                    elapsed: elapsed,
-                    speed: speed
-                });
-            }
-        });
+/** ====== Chrono ====== */
+const timerDisplay = document.getElementById("timerDisplay");
+const timerMinutes = document.getElementById("timerMinutes");
+const timerBeep = document.getElementById("timerBeep");
 
-        stopButton.addEventListener('click', () => {
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
+function fmtMMSS(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  return `${mm}:${ss}`;
+}
+function renderTimer(){
+  const ms = timer.running ? (timer.endAt - Date.now()) : timer.remainingMs;
+  timerDisplay.textContent = fmtMMSS(ms);
+}
+function beep(){
+  if(timerBeep.value !== "1") return;
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.value = 880;
+    g.gain.value = 0.03;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    setTimeout(()=>{ o.stop(); ctx.close(); }, 180);
+  }catch(e){}
+}
+function tick(){
+  if(!timer.running) return;
+  const left = timer.endAt - Date.now();
+  if(left <= 0){
+    timer.running = false;
+    timer.remainingMs = 0;
+    renderTimer();
+    beep();
+    toast("Temps écoulé");
+    return;
+  }
+  renderTimer();
+  requestAnimationFrame(tick);
+}
 
-                const elapsed = Math.floor((new Date() - startTime) / 1000);
-                const averageSpeed = calculateSpeed(elapsed, totalDistance);
+document.getElementById("timerStart").addEventListener("click", ()=>{
+  const mins = Math.max(0, Number(timerMinutes.value||0));
+  if(!timer.running){
+    if(timer.remainingMs<=0) timer.remainingMs = mins * 60 * 1000;
+    timer.endAt = Date.now() + timer.remainingMs;
+    timer.running = true;
+    tick();
+  }
+});
+document.getElementById("timerPause").addEventListener("click", ()=>{
+  if(timer.running){
+    timer.remainingMs = Math.max(0, timer.endAt - Date.now());
+    timer.running = false;
+    renderTimer();
+  }
+});
+document.getElementById("timerReset").addEventListener("click", ()=>{
+  timer.running = false;
+  const mins = Math.max(0, Number(timerMinutes.value||0));
+  timer.remainingMs = mins * 60 * 1000;
+  renderTimer();
+});
 
-                finalResult.textContent = `Temps Total: ${formatTime(elapsed)} - Vitesse Moyenne: ${averageSpeed} km/h`;
-            }
-        });
+timerMinutes.addEventListener("change", ()=>{
+  if(!timer.running){
+    timer.remainingMs = Math.max(0, Number(timerMinutes.value||0)) * 60 * 1000;
+    renderTimer();
+  }
+});
 
-        resetButton.addEventListener('click', () => {
-            clear
+/** ====== Setup ====== */
+const taStudents = document.getElementById("taStudents");
+const inpCourts = document.getElementById("inpCourts");
+const inpCenterNames = document.getElementById("inpCenterNames");
+const courtConfig = document.getElementById("courtConfig");
+
+function buildCourts(count){
+  const n = Math.min(12, Math.max(8, count|0));
+  const centerNames = inpCenterNames.value.split(",").map(s=>s.trim()).filter(Boolean);
+  const c1 = centerNames[0] || "Centre 1";
+  const c2 = centerNames[1] || "Centre 2";
+  const courts = [];
+  for(let i=1;i<=n;i++){
+    const isCenter = (i===Math.ceil(n/2)-0) || (i===Math.ceil(n/2)+1); // approximation, mais on renomme ensuite
+    let name = `Terrain ${i}`;
+    let allowDoubles = false;
+    // Règle demandée : seulement 2 terrains centraux en double
+    if(i===Math.floor(n/2) || i===Math.floor(n/2)+1){
+      allowDoubles = true;
+      name = (i===Math.floor(n/2)) ? c1 : c2;
+    }
+    courts.push({
+      id: uid("court"),
+      name,
+      allowDoubles,
+      mode: "S",
+      umpire: false,
+    });
+  }
+  // Si n=8..12, les deux “centraux” deviennent ceux au milieu (floor(n/2) et +1).
+  return courts;
+}
+
+function renderCourtConfig(){
+  courtConfig.innerHTML = "";
+  state.courts.forEach((c, idx)=>{
+    const el = document.createElement("div");
+    el.className = "court";
+    el.innerHTML = `
+      <div class="courtTop">
+        <div class="name">${c.name}</div>
+        <span class="tag">${c.allowDoubles ? "Double possible" : "Simple uniquement"}</span>
+      </div>
+
+      <div class="two">
+        <div class="switch">
+          <input type="checkbox" ${c.mode==="D" ? "checked":""} ${c.allowDoubles ? "" : "disabled"} data-act="mode" data-id="${c.id}">
+          <div>
+            <div style="font-weight:900">Double</div>
+            <div class="mini">${c.allowDoubles ? "Active pour jouer à 2 vs 2" : "Interdit sur ce terrain"}</div>
+          </div>
+        </div>
+
+        <div class="switch">
+          <input type="checkbox" ${c.umpire ? "checked":""} data-act="umpire" data-id="${c.id}">
+          <div>
+            <div style="font-weight:900">Avec arbitre</div>
+            <div class="mini">Utile en éval + gestion temps</div>
+          </div>
+        </div>
+      </div>
+    `;
+    courtConfig.appendChild(el);
+  });
+
+  courtConfig.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+    cb.addEventListener("change", (e)=>{
+      const id = e.target.dataset.id;
+      const act = e.target.dataset.act;
+      const court = state.courts.find(x=>x.id===id);
+      if(!court) return;
+      if(act==="mode"){
+        court.mode = e.target.checked ? "D" : "S";
+      }
+      if(act==="umpire"){
+        court.umpire = !!e.target.checked;
+      }
+      saveState();
+    });
+  });
+}
+
+document.getElementById("btnSaveSetup").addEventListener("click", ()=>{
+  // Students
+  const names = taStudents.value.split("\n")
+    .map(s=>s.trim())
+    .filter(Boolean);
+
+  state.students = names.map(n=>({id: uid("s"), name:n}));
+
+  // Courts
+  const nCourts = Math.min(12, Math.max(8, Number(inpCourts.value||8)));
+  state.courts = buildCourts(nCourts);
+
+  // Tournament name
+  const t = inpTournament.value.trim();
+  state.tournamentName = t || state.tournamentName || "Évaluation Bac";
+
+  saveState();
+  toast("Saisie enregistrée");
+  showPage("matches");
+});
+
+document.getElementById("btnAutoSingles").addEventListener("click", ()=>{
+  state.courts.forEach(c=>c.mode="S");
+  saveState();
+  toast("Tous en simple");
+});
+document.getElementById("btnCenterDoubles").addEventListener("click", ()=>{
+  state.courts.forEach(c=>{
+    if(c.allowDoubles) c.mode="D";
+    else c.mode="S";
+  });
+  saveState();
+  toast("Double sur centraux");
+});
+document.getElementById("btnNoUmpires").addEventListener("click", ()=>{
+  state.courts.forEach(c=>c.umpire=false);
+  saveState();
+  toast("Sans arbitre partout");
+});
+document.getElementById("btnYesUmpires").addEventListener("click", ()=>{
+  state.courts.forEach(c=>c.umpire=true);
+  saveState();
+  toast("Avec arbitre partout");
+});
+
+/** ====== Matchs (live) ====== */
+const courtsLive = document.getElementById("courtsLive");
+
+function studentOptionsHTML(excludeIds=new Set()){
+  return state.students
+    .filter(s=>!excludeIds.has(s.id))
+    .map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`)
+    .join("");
+}
+
+function escapeHtml(str){
+  return (str||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+
+function renderCourtsLive(){
+  courtsLive.innerHTML = "";
+  if(state.students.length===0 || state.courts.length===0){
+    courtsLive.innerHTML = `<div class="muted">Va dans <b>Saisie</b> pour entrer la classe et configurer les terrains.</div>`;
+    return;
+  }
+
+  state.courts.forEach((c)=>{
+    const el = document.createElement("div");
+    el.className = "court";
+
+    const canDouble = c.allowDoubles && c.mode==="D";
+    const modeLabel = canDouble ? "Double (2v2)" : "Simple (1v1)";
+    const arbLabel = c.umpire ? "Avec arbitre" : "Sans arbitre";
+
+    el.innerHTML = `
+      <div class="courtTop">
+        <div class="name">${escapeHtml(c.name)}</div>
+        <span class="tag">${modeLabel}</span>
+        <span class="tag">${arbLabel}</span>
+        <span class="spacer"></span>
+        <span class="tag">Rotation ${state.round}</span>
+      </div>
+
+      <div class="two">
+        <div>
+          <label>Équipe A</label>
+          ${canDouble ? `
+            <div class="two">
+              <select data-role="a1" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+              <select data-role="a2" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+            </div>
+          ` : `
+            <select data-role="a1" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+          `}
+        </div>
+
+        <div>
+          <label>Équipe B</label>
+          ${canDouble ? `
+            <div class="two">
+              <select data-role="b1" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+              <select data-role="b2" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+            </div>
+          ` : `
+            <select data-role="b1" data-court="${c.id}"><option value="">—</option>${studentOptionsHTML()}</select>
+          `}
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <div class="score">
+          <span class="muted" style="font-weight:900">Score</span>
+          <input inputmode="numeric" pattern="[0-9]*" placeholder="A" data-role="scoreA" data-court="${c.id}">
+          <span class="muted" style="font-weight:900">—</span>
+          <input inputmode="numeric" pattern="[0-9]*" placeholder="B" data-role="scoreB" data-court="${c.id}">
+        </div>
+        <div class="spacer"></div>
+        <button class="btn good" data-act="saveMatch" data-court="${c.id}">Enregistrer</button>
+      </div>
+
+      <div class="hint">Astuce : tu peux laisser les joueurs sélectionnés et ne changer que le score à la rotation suivante.</div>
+    `;
+
+    courtsLive.appendChild(el);
+  });
+
+  courtsLive.querySelectorAll("button[data-act=saveMatch]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const courtId = btn.dataset.court;
+      const court = state.courts.find(x=>x.id===courtId);
+      if(!court) return;
+
+      const block = btn.closest(".court");
+      const getVal = (role)=> block.querySelector(`[data-role="${role}"][data-court="${courtId}"]`)?.value || "";
+      const scoreA = Number(block.querySelector(`[data-role="scoreA"][data-court="${courtId}"]`)?.value || "");
+      const scoreB = Number(block.querySelector(`[data-role="scoreB"][data-court="${courtId}"]`)?.value || "");
+
+      const canDouble = court.allowDoubles && court.mode==="D";
+      const a = [getVal("a1")].filter(Boolean);
+      const b = [getVal("b1")].filter(Boolean);
+      if(canDouble){
+        const a2 = getVal("a2"); const b2 = getVal("b2");
+        if(a2) a.push(a2);
+        if(b2) b.push(b2);
+      }
+
+      // Validations
+      if(a.length !== (canDouble?2:1) || b.length !== (canDouble?2:1)){
+        alert("Sélectionne tous les joueurs requis (simple: 1 vs 1 ; double: 2 vs 2).");
+        return;
+      }
+      const all = [...a, ...b];
+      const uniq = new Set(all);
+      if(uniq.size !== all.length){
+        alert("Un élève est sélectionné deux fois dans le même match.");
+        return;
+      }
+      if(!Number.isFinite(scoreA) || !Number.isFinite(scoreB)){
+        alert("Entre les scores A et B (nombres).");
+        return;
+      }
+
+      const match = {
+        id: uid("m"),
+        ts: Date.now(),
+        courtId,
+        mode: canDouble ? "D" : "S",
+        umpire: !!court.umpire,
+        teamA: a,
+        teamB: b,
+        scoreA: scoreA|0,
+        scoreB: scoreB|0,
+        round: state.round,
+      };
+      state.matches.push(match);
+      saveState();
+      toast("Match enregistré");
+
+      // Nettoyage score uniquement
+      block.querySelector(`[data-role="scoreA"][data-court="${courtId}"]`).value = "";
+      block.querySelector(`[data-role="scoreB"][data-court="${courtId}"]`).value = "";
+    });
+  });
+}
+
+document.getElementById("btnNewRound").addEventListener("click", ()=>{
+  state.round += 1;
+  saveState();
+  toast("Rotation suivante");
+});
+document.getElementById("btnUndoLast").addEventListener("click", ()=>{
+  if(state.matches.length===0) return toast("Aucun match");
+  const last = state.matches[state.matches.length-1];
+  if(confirm("Annuler le dernier match enregistré ?")){
+    state.matches.pop();
+    saveState();
+    toast("Dernier match annulé");
+  }
+});
+
+/** ====== Performance (ELO) + stats ====== */
+function computeRatingsAndStats(){
+  // init ratings
+  const rating = new Map();          // sid -> current rating
+  const history = new Map();         // sid -> [{ts, r}]
+  const stats = new Map();           // sid -> {w,l, pf, pa}
+  state.students.forEach(s=>{
+    rating.set(s.id, 1000);
+    history.set(s.id, [{ts:0, r:1000}]);
+    stats.set(s.id, {w:0,l:0,pf:0,pa:0});
+  });
+
+  const K = 32;
+  const matchesSorted = [...state.matches].sort((a,b)=>a.ts-b.ts);
+
+  function teamRating(team){
+    const rs = team.map(id=>rating.get(id) ?? 1000);
+    return rs.reduce((x,y)=>x+y,0) / rs.length;
+  }
+  function expected(ra, rb){
+    return 1 / (1 + Math.pow(10, (rb-ra)/400));
+  }
+
+  matchesSorted.forEach(m=>{
+    const A = m.teamA, B = m.teamB;
+    const ra = teamRating(A);
+    const rb = teamRating(B);
+    const ea = expected(ra, rb);
+    const eb = 1 - ea;
+
+    const aWin = m.scoreA > m.scoreB;
+    const sa = aWin ? 1 : 0;
+    const sb = 1 - sa;
+
+    // Update stats points
+    A.forEach(id=>{
+      const st = stats.get(id);
+      st.pf += m.scoreA; st.pa += m.scoreB;
+      if(aWin) st.w += 1; else st.l += 1;
+    });
+    B.forEach(id=>{
+      const st = stats.get(id);
+      st.pf += m.scoreB; st.pa += m.scoreA;
+      if(!aWin) st.w += 1; else st.l += 1;
+    });
+
+    // Update ratings: teammates share same delta based on team avg
+    const deltaA = Math.round(K * (sa - ea));
+    const deltaB = Math.round(K * (sb - eb));
+
+    A.forEach(id=>{
+      rating.set(id, (rating.get(id) ?? 1000) + deltaA);
+      history.get(id).push({ts:m.ts, r: rating.get(id)});
+    });
+    B.forEach(id=>{
+      rating.set(id, (rating.get(id) ?? 1000) + deltaB);
+      history.get(id).push({ts:m.ts, r: rating.get(id)});
+    });
+  });
+
+  return { rating, history, stats };
+}
+
+/** ====== Bilan ====== */
+const tblRankingBody = document.querySelector("#tblRanking tbody");
+
+function renderResults(){
+  // KPIs
+  document.getElementById("kpiStudents").textContent = state.students.length;
+  document.getElementById("kpiMatches").textContent = state.matches.length;
+  document.getElementById("kpiCourts").textContent = state.courts.length;
+  if(state.matches.length){
+    const last = state.matches[state.matches.length-1];
+    const d = new Date(last.ts);
+    document.getElementById("kpiLast").textContent = d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }else{
+    document.getElementById("kpiLast").textContent = "—";
+  }
+
+  tblRankingBody.innerHTML = "";
+  if(state.students.length===0){
+    tblRankingBody.innerHTML = `<tr><td colspan="5" class="muted">Aucun élève. Va dans Saisie.</td></tr>`;
+    return;
+  }
+
+  const { rating, stats } = computeRatingsAndStats();
+
+  const rows = state.students.map(s=>{
+    const st = stats.get(s.id) || {w:0,l:0,pf:0,pa:0};
+    return {
+      id: s.id,
+      name: s.name,
+      perf: rating.get(s.id) ?? 1000,
+      w: st.w,
+      l: st.l,
+      pf: st.pf,
+      pa: st.pa,
+      diff: (st.pf - st.pa),
+    };
+  }).sort((a,b)=>b.perf - a.perf);
+
+  rows.forEach((r, idx)=>{
+    const tr = document.createElement("tr");
+    tr.className = "clickRow";
+    tr.innerHTML = `
+      <td class="rank">${idx+1}</td>
+      <td style="font-weight:900">${escapeHtml(r.name)}</td>
+      <td class="rank">${r.perf}</td>
+      <td>${r.w}-${r.l}</td>
+      <td class="rank">${r.pf}-${r.pa} <span class="muted">(${r.diff>=0?"+":""}${r.diff})</span></td>
+    `;
+    tr.addEventListener("click", ()=>openPlayerModal(r.id));
+    tblRankingBody.appendChild(tr);
+  });
+}
+
+/** ====== Fiche joueur (modal) ====== */
+const playerModal = document.getElementById("playerModal");
+document.getElementById("pmClose").addEventListener("click", closePlayerModal);
+playerModal.addEventListener("click", (e)=>{
+  if(e.target === playerModal) closePlayerModal();
+});
+
+function closePlayerModal(){
+  playerModal.classList.remove("open");
+}
+
+function openPlayerModal(studentId){
+  const s = state.students.find(x=>x.id===studentId);
+  if(!s) return;
+
+  const { rating, history, stats } = computeRatingsAndStats();
+  const st = stats.get(studentId) || {w:0,l:0,pf:0,pa:0};
+
+  document.getElementById("pmName").textContent = s.name;
+  document.getElementById("pmSub").textContent = `${state.tournamentName} — ${state.matches.length} match(s)`;
+  document.getElementById("pmPerf").textContent = rating.get(studentId) ?? 1000;
+  document.getElementById("pmVD").textContent = `${st.w}-${st.l}`;
+  const diff = st.pf - st.pa;
+  document.getElementById("pmPts").textContent = `${st.pf}-${st.pa} (${diff>=0?"+":""}${diff})`;
+  const total = st.w + st.l;
+  document.getElementById("pmRate").textContent = total ? `${Math.round(100*st.w/total)}%` : "—";
+
+  // Match list
+  const list = document.getElementById("pmMatches");
+  list.innerHTML = "";
+
+  const matches = [...state.matches].filter(m=>m.teamA.includes(studentId) || m.teamB.includes(studentId))
+    .sort((a,b)=>b.ts-a.ts);
+
+  if(matches.length===0){
+    list.innerHTML = `<div class="muted">Aucun match pour cet élève pour l’instant.</div>`;
+  }else{
+    matches.forEach(m=>{
+      const court = state.courts.find(c=>c.id===m.courtId);
+      const courtName = court?.name || "Terrain";
+      const aNames = m.teamA.map(id=>state.students.find(x=>x.id===id)?.name || "—").join(" + ");
+      const bNames = m.teamB.map(id=>state.students.find(x=>x.id===id)?.name || "—").join(" + ");
+      const isA = m.teamA.includes(studentId);
+      const myScore = isA ? m.scoreA : m.scoreB;
+      const opScore = isA ? m.scoreB : m.scoreA;
+      const win = myScore > opScore;
+
+      const d = new Date(m.ts);
+      const line = document.createElement("div");
+      line.className = "court";
+      line.innerHTML = `
+        <div class="courtTop">
+          <div class="name">${escapeHtml(courtName)}</div>
+          <span class="tag">Rot. ${m.round}</span>
+          <span class="tag">${m.mode==="D" ? "Double" : "Simple"}</span>
+          <span class="tag">${m.umpire ? "Arbitre" : "Sans arbitre"}</span>
+          <span class="spacer"></span>
+          <span class="tag">${d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}</span>
+        </div>
+        <div style="line-height:1.35">
+          <div><b>${escapeHtml(aNames)}</b> vs <b>${escapeHtml(bNames)}</b></div>
+          <div style="margin-top:6px">
+            <span class="tag" style="color:${win ? "var(--accent2)" : "var(--danger)"}; border-color:rgba(255,255,255,.10)">
+              ${win ? "Victoire" : "Défaite"} — ${myScore}-${opScore}
+            </span>
+          </div>
+        </div>
+      `;
+      list.appendChild(line);
+    });
+  }
+
+  // Chart
+  drawPlayerChart(studentId, history.get(studentId) || [{ts:0,r:1000}]);
+
+  playerModal.classList.add("open");
+}
+
+function drawPlayerChart(studentId, series){
+  const canvas = document.getElementById("pmChart");
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // background grid
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "rgba(0,0,0,.10)";
+  ctx.fillRect(0,0,W,H);
+
+  const pad = 30;
+  const pts = series.map(p=>p.r);
+  const min = Math.min(...pts, 900);
+  const max = Math.max(...pts, 1100);
+  const xStep = (W - pad*2) / Math.max(1, (series.length-1));
+  const y = (r)=> pad + (H - pad*2) * (1 - (r - min)/(max - min || 1));
+
+  // axis labels
+  ctx.fillStyle = "rgba(232,238,252,.75)";
+  ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+  ctx.fillText(`min ${min|0}`, 10, H-12);
+  ctx.fillText(`max ${max|0}`, 10, 18);
+
+  // line
+  ctx.strokeStyle = "rgba(102,227,255,.95)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  series.forEach((p,i)=>{
+    const xx = pad + i*xStep;
+    const yy = y(p.r);
+    if(i===0) ctx.moveTo(xx,yy);
+    else ctx.lineTo(xx,yy);
+  });
+  ctx.stroke();
+
+  // dots
+  ctx.fillStyle = "rgba(155,255,138,.90)";
+  series.forEach((p,i)=>{
+    const xx = pad + i*xStep;
+    const yy = y(p.r);
+    ctx.beginPath();
+    ctx.arc(xx,yy,4,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+/** ====== Export CSV ====== */
+document.getElementById("btnExport").addEventListener("click", ()=>{
+  if(state.students.length===0){
+    alert("Aucun élève à exporter.");
+    return;
+  }
+  const { rating, stats } = computeRatingsAndStats();
+
+  // eleves.csv
+  const elevesRows = [["tournament","student_id","name"]];
+  state.students.forEach(s=>{
+    elevesRows.push([state.tournamentName, s.id, s.name]);
+  });
+
+  // matchs.csv
+  const matchsRows = [["tournament","match_id","timestamp","round","court","mode","umpire","teamA","teamB","scoreA","scoreB"]];
+  state.matches.forEach(m=>{
+    const court = state.courts.find(c=>c.id===m.courtId);
+    const courtName = court?.name || "";
+    const teamA = m.teamA.map(id=>state.students.find(x=>x.id===id)?.name || "").join(" + ");
+    const teamB = m.teamB.map(id=>state.students.find(x=>x.id===id)?.name || "").join(" + ");
+    matchsRows.push([
+      state.tournamentName,
+      m.id,
+      new Date(m.ts).toISOString(),
+      m.round,
+      courtName,
+      m.mode==="D" ? "double" : "simple",
+      m.umpire ? "yes" : "no",
+      teamA,
+      teamB,
+      m.scoreA,
+      m.scoreB
+    ]);
+  });
+
+  // bilan.csv
+  const bilanRows = [["tournament","student_id","name","perf_index","wins","losses","points_for","points_against","diff"]];
+  state.students.forEach(s=>{
+    const st = stats.get(s.id) || {w:0,l:0,pf:0,pa:0};
+    bilanRows.push([
+      state.tournamentName,
+      s.id,
+      s.name,
+      rating.get(s.id) ?? 1000,
+      st.w, st.l, st.pf, st.pa, (st.pf - st.pa)
+    ]);
+  });
+
+  downloadCSV("eleves.csv", elevesRows);
+  downloadCSV("matchs.csv", matchsRows);
+  downloadCSV("bilan.csv", bilanRows);
+  toast("CSV exportés");
+});
+
+function csvEscape(v){
+  const s = String(v ?? "");
+  if(/[,"\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+  return s;
+}
+function toCSV(rows){
+  return rows.map(r=>r.map(csvEscape).join(",")).join("\n");
+}
+function downloadCSV(filename, rows){
+  const blob = new Blob([toCSV(rows)], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{
+    URL.revokeObjectURL(a.href);
+    a.remove();
+  }, 0);
+}
+
+/** ====== Render all ====== */
+function renderAll(){
+  // top name
+  inpTournament.value = state.tournamentName || "Évaluation Bac";
+  tournamentNameEl.textContent = state.tournamentName || "Évaluation Bac";
+
+  // setup fields
+  taStudents.value = state.students.map(s=>s.name).join("\n");
+  inpCourts.value = state.courts.length ? state.courts.length : Number(inpCourts.value||8);
+
+  renderTimer();
+
+  // court config on setup
+  if(document.getElementById("page-setup").style.display !== "none"){
+    // If no courts yet, preview with selected number
+    if(state.courts.length===0){
+      state.courts = buildCourts(Number(inpCourts.value||8));
+    }
+    renderCourtConfig();
+  }
+
+  // live courts
+  if(document.getElementById("page-matches").style.display !== "none"){
+    renderCourtsLive();
+  }
+
+  // results
+  if(document.getElementById("page-results").style.display !== "none"){
+    renderResults();
+  }
+}
+
+/** ====== Service Worker registration ====== */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+/** init */
+timer.remainingMs = Math.max(0, Number(timerMinutes.value||5)) * 60 * 1000;
+renderAll();
+</script>
+</body>
+</html>
