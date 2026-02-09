@@ -20,6 +20,7 @@
       --radius: 18px;
       --tap: 46px;
       --shadow: 0 16px 36px rgba(15,40,90,.10);
+      --app-padding-bottom: 180px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
       --sans: ui-sans-serif, -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial;
     }
@@ -32,7 +33,11 @@
       -webkit-font-smoothing:antialiased;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
-    .app{max-width:1100px;margin:0 auto;padding:16px 16px 90px}
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px 16px calc(var(--app-padding-bottom, 180px) + env(safe-area-inset-bottom));
+    }
     header{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px; padding:10px 6px 16px;
@@ -59,18 +64,23 @@
       max-width:420px;width:100%;
     }
     .heroBox .title{font-size:32px;font-weight:900;margin-bottom:8px}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.93));
-      border:1px solid var(--stroke);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .card .hd{
-      padding:14px 14px 10px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border-bottom:1px solid rgba(16,52,96,.08);
-      background:linear-gradient(180deg, var(--surface2), var(--surface));
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.93));
+  border:1px solid var(--stroke);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+#page-setup .card{background:linear-gradient(180deg,#fefcfb,#f4faff)}
+#page-assign .card{background:linear-gradient(180deg,#fbfffe,#f1f9ff)}
+#page-matches .card{background:linear-gradient(180deg,#fffdf7,#f6fbff)}
+#page-results .card{background:linear-gradient(180deg,#f9fbff,#f4f6ff)}
+#page-doubles .card{background:linear-gradient(180deg,#fefbff,#f2f3ff)}
+.card .hd{
+  padding:14px 14px 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border-bottom:1px solid rgba(16,52,96,.08);
+  background:linear-gradient(180deg, var(--surface2), var(--surface));
     }
     .card .bd{padding:14px}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -140,19 +150,35 @@
     .table th{background:var(--surface2);color:var(--txt);font-weight:800}
     .table td{background:var(--surface);color:var(--txt)}
     .table tr:nth-child(even) td{background:var(--surface2)}
-    .nav{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(16,52,96,.12);box-shadow:0 -12px 30px rgba(15,40,90,.12)}
+    .nav{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:8px 14px calc(8px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(14px);
+      border-top:1px solid rgba(16,52,96,.12);
+      box-shadow:0 -12px 30px rgba(15,40,90,.12);
+      z-index:5;
+    }
     .navInner{max-width:1100px;margin:0 auto;display:flex;gap:10px;justify-content:space-between}
-    .navBtn{flex:1;min-height:50px;border-radius:16px;border:1px solid rgba(16,52,96,.12);background:rgba(255,255,255,.95);color:var(--muted);font-weight:900;cursor:pointer}
+    .navBtn{flex:1;min-height:46px;border-radius:16px;border:1px solid rgba(16,52,96,.12);background:rgba(255,255,255,.95);color:var(--muted);font-weight:900;cursor:pointer}
     .navBtn.active{background:rgba(60,109,240,.14);border-color:rgba(60,109,240,.28);color:#12306a;box-shadow:0 10px 20px rgba(60,109,240,.25)}
     .modal{position:fixed;inset:0;display:none;background:rgba(0,0,0,.55);padding:14px;z-index:50}
-    .modal.open{display:flex;align-items:flex-end}
-    .modal.timerCenter{align-items:center;justify-content:center}
-    @media(min-width:720px){.modal.open{align-items:center;justify-content:center}}
-    .sheet{width:100%;max-width:860px;background:linear-gradient(180deg, rgba(18,27,46,.98), rgba(12,18,32,.98));border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.55);overflow:hidden}
-    .sheet .hd{padding:14px;display:flex;align-items:center;gap:10px;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);color:#fff}
-    .sheet .bd{padding:14px;max-height:70vh;overflow:auto;color:#fff}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;z-index:60;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.14);color:#fff;padding:10px 14px;border-radius:999px;display:none}
-    .toast.show{display:block}
+.modal.open{display:flex;align-items:flex-end}
+.modal.timerCenter{align-items:center;justify-content:center}
+@media(min-width:720px){.modal.open{align-items:center;justify-content:center}}
+.sheet{width:100%;max-width:860px;background:linear-gradient(180deg, rgba(18,27,46,.98), rgba(12,18,32,.98));border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.55);overflow:hidden}
+.sheet .hd{padding:14px;display:flex;align-items:center;gap:10px;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);color:#fff}
+.sheet .bd{padding:14px;max-height:70vh;overflow:auto;color:#fff}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;z-index:60;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.14);color:#fff;padding:10px 14px;border-radius:999px;display:none}
+.toast.show{display:block}
+.timerPopup{background:linear-gradient(135deg,#0b1b38,#152850);border-radius:24px;padding:24px;color:#fff;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;min-width:280px}
+.timerPopup button{align-self:stretch}
+.timerPopupDisplay{font-size:72px;font-family:var(--mono);font-weight:900;text-align:center}
+.timerPopup.fullscreen{width:100vw;height:100vh;border-radius:0;padding:40px}
+.timerPopup.fullscreen .timerPopupDisplay{font-size:20vw}
   </style>
 </head>
 <body>
@@ -203,7 +229,7 @@ Camille
             <div>
               <label>Nombre de terrains (1 à 12)</label>
               <input id="inpCourts" type="number" min="1" max="12" value="8"/>
-              <div class="hint">Double possible seulement sur les 2 terrains centraux.</div>
+              <div class="hint">Ronde italienne possible seulement sur les 2 terrains centraux.</div>
             </div>
             <div>
               <label>Nom des 2 terrains centraux</label>
@@ -213,7 +239,7 @@ Camille
           </div>
 
           <label style="margin-top:14px">Règles par terrain</label>
-          <div class="hint">Personnalise chaque terrain : simple/double et avec/sans arbitre.</div>
+          <div class="hint">Personnalise chaque terrain : simple/ronde italienne et avec/sans arbitre.</div>
           <div id="courtConfig" class="courtList" style="margin-top:10px"></div>
         </div>
       </div>
@@ -223,7 +249,7 @@ Camille
         <div class="bd">
           <div class="row">
             <button class="btn" id="btnAutoSingles">Tout en simple</button>
-            <button class="btn" id="btnCenterDoubles">Double sur les centraux</button>
+            <button class="btn" id="btnCenterDoubles">Ronde italienne sur les centraux</button>
           </div>
           <div class="row" style="margin-top:10px">
             <button class="btn" id="btnNoUmpires">Sans arbitre partout</button>
@@ -366,6 +392,54 @@ Camille
         </div>
       </div>
     </section>
+
+    <section id="page-doubles" style="display:none" class="grid cols2">
+      <div class="card">
+        <div class="hd">
+          <h2>Ronde italienne — constitution des paires</h2>
+          <div class="row">
+            <button class="btn" id="btnDoubleAuto">Auto</button>
+            <button class="btn primary" id="btnDoubleSave">Enregistrer</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="hint">Associe les élèves par paire (auto puis ajuste si besoin).</div>
+          <div id="doubleAssignList" class="courtList" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <h2>Ronde italienne — résultats</h2>
+          <div class="row nowrap">
+            <button class="btn primary" id="btnDoubleSaveMatches">Enregistrer la rotation</button>
+            <button class="btn good" id="btnDoubleRotation">Rotation suivante</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="hint" style="margin-bottom:10px">
+            1) Simple 1 jusqu’à 10.<br/>
+            2) Simple 2 continue jusqu’à 20.<br/>
+            3) Ronde italienne jusqu’à 30 avec 2 pts d’écart.<br/>
+            Gagnant monte, perdant descend (sans arbitre).
+          </div>
+          <div id="doubleCourts" class="courtList"></div>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1 / -1">
+        <div class="hd">
+          <h2>Ronde italienne — bilan</h2>
+          <div class="row">
+            <button class="btn" id="btnDoubleExport">Exporter CSV</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="hint">Historique des rotations ronde italienne (simples + ronde italienne).</div>
+          <div id="doubleResults" class="courtList"></div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="nav">
@@ -375,6 +449,10 @@ Camille
       <button class="navBtn" data-nav="assign">Répartition</button>
       <button class="navBtn" data-nav="matches">Matchs</button>
       <button class="navBtn" data-nav="results">Bilan</button>
+      <button class="navBtn" data-nav="doubles">Ronde italienne</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="btnOpenDoubleTab" style="width:100%">Ouvrir Ronde italienne dans un nouvel onglet</button>
     </div>
   </div>
 
@@ -404,15 +482,15 @@ Camille
   </div>
 
   <div class="modal timerCenter" id="timerModal" role="dialog" aria-modal="true">
-    <div class="sheet" style="max-width:420px">
-      <div class="hd">
-        <h2>Chrono</h2>
-        <button class="btn" id="btnTimerClose">Fermer</button>
+    <div class="timerPopup" id="timerPopupBox">
+      <div class="row" style="justify-content:space-between;width:100%">
+        <h2 style="margin:0;font-size:18px">Chrono</h2>
+        <div class="row" style="gap:8px">
+          <button class="btn" id="btnTimerFullscreen">Plein écran</button>
+          <button class="btn" id="btnTimerClose">Fermer</button>
+        </div>
       </div>
-      <div class="bd" style="text-align:center">
-        <div style="font-size:72px;font-family:var(--mono);font-weight:900" id="timerPopupDisplay">00:00</div>
-        <button class="btn" id="btnTimerFullscreen">Plein écran</button>
-      </div>
+      <div class="timerPopupDisplay" id="timerPopupDisplay">00:00</div>
     </div>
   </div>
 
@@ -427,7 +505,10 @@ const defaultState = () => ({
   courts: [],
   matches: [],
   assignments: {},
-  round: 1
+  round: 1,
+  doubleAssignments: {},
+  doubleMatches: [],
+  doubleRound: 1
 });
 
 let state = loadState();
@@ -465,6 +546,7 @@ const timerMinutes = document.getElementById("timerMinutes");
 const timerBeep = document.getElementById("timerBeep");
 const timerModalEl = document.getElementById("timerModal");
 const timerPopupDisplay = document.getElementById("timerPopupDisplay");
+const timerPopupBox = document.getElementById("timerPopupBox");
 
 function fmtMMSS(ms){
   const s = Math.max(0, Math.floor(ms/1000));
@@ -528,21 +610,42 @@ document.getElementById("timerReset").addEventListener("click", ()=>{
 document.getElementById("btnTimerPopup").addEventListener("click", ()=>{
   timerModalEl.classList.add("open");
 });
-document.getElementById("btnTimerClose").addEventListener("click", ()=>{
+function exitFullscreen(){
+  if(document.fullscreenElement || document.webkitFullscreenElement){
+    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if(exit){
+      exit.call(document).catch(()=>{});
+    }
+  }
+}
+function closeTimerModal(){
   timerModalEl.classList.remove("open");
-});
+  exitFullscreen();
+}
+document.getElementById("btnTimerClose").addEventListener("click", closeTimerModal);
 if(timerModalEl){
   timerModalEl.addEventListener("click", (e)=>{
     if(e.target === timerModalEl){
-      timerModalEl.classList.remove("open");
+      closeTimerModal();
     }
   });
 }
 document.getElementById("btnTimerFullscreen").addEventListener("click", ()=>{
-  const target = timerPopupDisplay;
-  if(target.requestFullscreen){
-    target.requestFullscreen().catch(()=>{});
+  if(!timerPopupBox) return;
+  const req = timerPopupBox.requestFullscreen || timerPopupBox.webkitRequestFullscreen;
+  if(req){
+    req.call(timerPopupBox).catch(()=>{});
   }
+});
+document.addEventListener("fullscreenchange", ()=>{
+  if(!timerPopupBox) return;
+  const isFull = document.fullscreenElement === timerPopupBox;
+  timerPopupBox.classList.toggle("fullscreen", isFull);
+});
+document.addEventListener("webkitfullscreenchange", ()=>{
+  if(!timerPopupBox) return;
+  const isFull = document.webkitFullscreenElement === timerPopupBox;
+  timerPopupBox.classList.toggle("fullscreen", isFull);
 });
 renderTimer();
 
@@ -594,13 +697,13 @@ function renderCourtConfig(){
     wrapper.innerHTML = `
       <div class="courtTop">
         <div class="name">${escapeHtml(court.name)}</div>
-        <span class="tag">${court.allowDoubles ? "Double possible" : "Simple uniquement"}</span>
+        <span class="tag">${court.allowDoubles ? "Ronde italienne possible" : "Simple uniquement"}</span>
       </div>
       <div class="two">
         <div class="switch">
           <input type="checkbox" data-act="mode" ${court.mode==="D" ? "checked": ""} ${court.allowDoubles ? "" : "disabled"}>
           <div>
-            <div style="font-weight:900">Double</div>
+            <div style="font-weight:900">Ronde italienne</div>
             <div class="mini">${court.allowDoubles ? "Active 2 vs 2" : "Interdit"}</div>
           </div>
         </div>
@@ -657,6 +760,9 @@ function handleSetupSave(){
   state.assignments = {};
   state.matches = [];
   state.round = 1;
+  state.doubleAssignments = {};
+  state.doubleMatches = [];
+  state.doubleRound = 1;
   state.tournamentName = inpTournament.value.trim() || "Évaluation Bac";
   saveState();
   toast("Saisie enregistrée");
@@ -724,15 +830,17 @@ function studentOptionsHTML(selected){
   `).join("");
 }
 
-function renderAssignmentCards(container, {showUmpireToggle=false}={}){
+function renderAssignmentCards(container, {showUmpireToggle=false, forcePairs=false, source="singles"}={}){
   container.innerHTML = "";
   const used = new Set();
+  const getData = source==="doubles" ? getDoubleAssign : getAssignment;
   state.courts.forEach((court, idx)=>{
-    const assign = getAssignment(court);
-    assign.teamA.forEach(id=>used.add(id));
-    assign.teamB.forEach(id=>used.add(id));
-    if(assign.umpire) used.add(assign.umpire);
-    const slots = court.allowDoubles && court.mode==="D" ? 2 : 1;
+    const assign = getData(court);
+    (assign.teamA || []).forEach(id=>used.add(id));
+    (assign.teamB || []).forEach(id=>used.add(id));
+    if(source!=="doubles" && assign.umpire) used.add(assign.umpire);
+    const allowDouble = forcePairs ? true : (court.allowDoubles && court.mode==="D");
+    const slots = allowDouble ? 2 : 1;
     const buildTeamSelects = (teamKey, values)=>{
       if(slots===1){
         return `<select data-slot="${teamKey}0" data-court="${court.id}"><option value="">—</option>${studentOptionsHTML(values[0])}</select>`;
@@ -743,7 +851,7 @@ function renderAssignmentCards(container, {showUmpireToggle=false}={}){
       }
       return `<div class="two">${items.join("")}</div>`;
     };
-    const umpireBlock = court.umpire ? `<div><label>Arbitre</label><select data-slot="umpire" data-court="${court.id}"><option value="">—</option>${studentOptionsHTML(assign.umpire)}</select></div>` : "";
+    const umpireBlock = (source==="doubles") ? "" : (court.umpire ? `<div><label>Arbitre</label><select data-slot="umpire" data-court="${court.id}"><option value="">—</option>${studentOptionsHTML(assign.umpire)}</select></div>` : "");
     const umpireToggle = showUmpireToggle ? `
       <label class="switch" style="max-width:220px;margin-left:auto">
         <input type="checkbox" data-act="toggle-umpire" data-id="${court.id}" ${court.umpire ? "checked":""}>
@@ -758,7 +866,7 @@ function renderAssignmentCards(container, {showUmpireToggle=false}={}){
     block.innerHTML = `
       <div class="courtTop">
         <div class="name">${escapeHtml(court.name)}</div>
-        <span class="tag">${slots===2 ? "Double" : "Simple"}</span>
+        <span class="tag">${slots===2 ? "Ronde italienne" : "Simple"}</span>
         <span class="tag">${court.umpire ? "Avec arbitre" : "Sans arbitre"}</span>
         ${umpireToggle}
       </div>
@@ -809,6 +917,23 @@ function renderAssignmentsPage(){
   }
 }
 
+function getDoubleAssign(court){
+  if(!state.doubleAssignments[court.id]){
+    state.doubleAssignments[court.id] = {teamA:[], teamB:[]};
+  }
+  return state.doubleAssignments[court.id];
+}
+
+function renderDoubleAssignments(){
+  if(!doubleAssignList) return;
+  doubleAssignList.innerHTML = "";
+  if(state.students.length===0 || state.courts.length===0){
+    doubleAssignList.innerHTML = `<div class="muted">Configure d’abord la classe.</div>`;
+    return;
+  }
+  renderAssignmentCards(doubleAssignList, {showUmpireToggle:false, forcePairs:true, source:"doubles"});
+}
+
 function attachAssignmentSelectHandlers(root){
   const selects = root.querySelectorAll("select[data-slot]");
   selects.forEach(sel=>{
@@ -836,21 +961,24 @@ function refreshAssignmentSelectOptions(root){
   });
 }
 
-function collectAssignmentsFromContainer(container){
+function collectAssignmentsFromContainer(container, {forcePairs=false, source="singles"}={}){
   const next = {};
   const used = new Set();
+  const getter = source==="doubles" ? getDoubleAssign : getAssignment;
   for(const court of state.courts){
     const card = container.querySelector(`[data-court="${court.id}"]`);
     if(!card) {
-      next[court.id] = getAssignment(court);
+      next[court.id] = getter(court);
       continue;
     }
-    const slots = court.allowDoubles && court.mode==="D" ? 2 : 1;
+    const slots = forcePairs ? 2 : (court.allowDoubles && court.mode==="D" ? 2 : 1);
     const teamA = [];
     const teamB = [];
     for(let i=0;i<slots;i++){
-      const va = card.querySelector(`[data-slot="a${i}"]`)?.value || "";
-      const vb = card.querySelector(`[data-slot="b${i}"]`)?.value || "";
+      const selA = card.querySelector(`[data-slot="a${i}"]`);
+      const selB = card.querySelector(`[data-slot="b${i}"]`);
+      const va = selA ? selA.value : "";
+      const vb = selB ? selB.value : "";
       if(va){
         if(used.has(va)){
           alert("Un élève apparaît plusieurs fois.");
@@ -869,8 +997,9 @@ function collectAssignmentsFromContainer(container){
       }
     }
     let umpire = null;
-    if(court.umpire){
-      const vu = card.querySelector(`[data-slot="umpire"]`)?.value || "";
+    if(source!=="doubles" && court.umpire){
+      const umpSel = card.querySelector(`[data-slot="umpire"]`);
+      const vu = umpSel ? umpSel.value : "";
       if(vu){
         if(used.has(vu)){
           alert("Un élève apparaît plusieurs fois.");
@@ -880,8 +1009,64 @@ function collectAssignmentsFromContainer(container){
         umpire = vu;
       }
     }
-    next[court.id] = {teamA, teamB, umpire};
+    if(source==="doubles"){
+      next[court.id] = {teamA, teamB};
+    }else{
+      next[court.id] = {teamA, teamB, umpire};
+    }
   }
+  return next;
+}
+
+function computeNextDoubleAssignments(){
+  if(state.students.length===0 || state.courts.length===0){
+    alert("Configure d’abord la classe.");
+    return null;
+  }
+  const roundMatches = state.doubleMatches.filter(m=>m.round===state.doubleRound);
+  const latestByCourt = new Map();
+  roundMatches.forEach(m=>{
+    const prev = latestByCourt.get(m.courtId);
+    if(!prev || prev.ts < m.ts){
+      latestByCourt.set(m.courtId, m);
+    }
+  });
+  if(latestByCourt.size !== state.courts.length){
+    alert("Enregistre toutes les rencontres ronde italienne avant de lancer la rotation.");
+    return null;
+  }
+  const winners = [];
+  const losers = [];
+  state.courts.forEach(court=>{
+    const match = latestByCourt.get(court.id);
+    const winA = match.double.a > match.double.b;
+    winners.push(winA ? match.pairA : match.pairB);
+    losers.push(winA ? match.pairB : match.pairA);
+  });
+  const next = {};
+  const lastIdx = state.courts.length - 1;
+  state.courts.forEach((court, idx)=>{
+    let pairA;
+    let pairB;
+    if(idx===0){
+      pairA = winners[0];
+    }else{
+      pairA = losers[idx-1];
+    }
+    if(idx===lastIdx){
+      pairB = losers[lastIdx];
+    }else{
+      pairB = winners[idx+1];
+    }
+    const prevDouble = state.doubleAssignments[court.id] || {teamA:[], teamB:[]};
+    if(!pairA || pairA.length<2){
+      pairA = prevDouble.teamA.slice();
+    }
+    if(!pairB || pairB.length<2){
+      pairB = prevDouble.teamB.slice();
+    }
+    next[court.id] = {teamA: pairA, teamB: pairB};
+  });
   return next;
 }
 
@@ -922,6 +1107,56 @@ btnAutoAssign.addEventListener("click", ()=>{
   toast("Répartition auto effectuée");
 });
 
+const doubleAssignList = document.getElementById("doubleAssignList");
+const btnDoubleAuto = document.getElementById("btnDoubleAuto");
+const btnDoubleSave = document.getElementById("btnDoubleSave");
+const doubleCourtsEl = document.getElementById("doubleCourts");
+const btnDoubleSaveMatches = document.getElementById("btnDoubleSaveMatches");
+const btnDoubleRotation = document.getElementById("btnDoubleRotation");
+const doubleResultsEl = document.getElementById("doubleResults");
+const btnDoubleExport = document.getElementById("btnDoubleExport");
+const btnOpenDoubleTab = document.getElementById("btnOpenDoubleTab");
+
+if(btnDoubleAuto){
+  btnDoubleAuto.addEventListener("click", ()=>{
+    if(state.students.length===0 || state.courts.length===0){
+      alert("Saisis d’abord la classe");
+      return;
+    }
+    const sorted = [...state.students].sort((a,b)=>a.name.localeCompare(b.name));
+    const ids = sorted.map(s=>s.id);
+    let cursor = 0;
+    const next = {};
+    state.courts.forEach(court=>{
+      const pairASize = 2;
+      const pairBSize = 2;
+      const pairA = ids.slice(cursor, cursor+pairASize);
+      cursor += pairASize;
+      const pairB = ids.slice(cursor, cursor+pairBSize);
+      cursor += pairBSize;
+      next[court.id] = {teamA: pairA, teamB: pairB};
+    });
+    state.doubleAssignments = next;
+    saveState();
+    renderDoubleAssignments();
+    toast("Paires auto créées");
+  });
+}
+
+if(btnDoubleSave){
+  btnDoubleSave.addEventListener("click", ()=>{
+    if(state.students.length===0 || state.courts.length===0){
+      alert("Configure d’abord la classe");
+      return;
+    }
+    const result = collectAssignmentsFromContainer(doubleAssignList, {forcePairs:true, source:"doubles"});
+    if(!result) return;
+    state.doubleAssignments = result;
+    saveState();
+    toast("Paires enregistrées");
+  });
+}
+
 /** ===== Matchs ===== */
 const courtsLive = document.getElementById("courtsLive");
 const btnSaveMatches = document.getElementById("btnSaveMatches");
@@ -938,7 +1173,8 @@ let manualEditVisible = false;
 
 function studentNameById(id){
   if(!id) return "";
-  return state.students.find(s=>s.id===id)?.name || "";
+  const student = state.students.find(s=>s.id===id);
+  return student ? student.name : "";
 }
 
 function renderCourtsLive(){
@@ -958,7 +1194,7 @@ function renderCourtsLive(){
     card.innerHTML = `
       <div class="courtTop">
         <div class="name">${escapeHtml(court.name)}</div>
-        <span class="tag">${slots===2 ? "Double" : "Simple"}</span>
+        <span class="tag">${slots===2 ? "Ronde italienne" : "Simple"}</span>
         <span class="tag">${court.umpire ? "Avec arbitre" : "Sans arbitre"}</span>
         ${court.umpire ? `<span class="tag arbTag">Arbitre : <span class="arbName">${escapeHtml(studentNameById(assign.umpire) || "—")}</span></span>` : ""}
         <span class="tag">Rotation ${state.round}</span>
@@ -997,9 +1233,65 @@ function renderManualAdjust(){
   renderAssignmentCards(manualAdjustList, {showUmpireToggle:true});
 }
 
+function renderDoubleCourts(){
+  if(!doubleCourtsEl){
+    return;
+  }
+  doubleCourtsEl.innerHTML = "";
+  if(state.students.length===0 || state.courts.length===0){
+    doubleCourtsEl.innerHTML = `<div class="muted">Configure la séance avant de lancer la ronde italienne.</div>`;
+    return;
+  }
+  state.courts.forEach((court, idx)=>{
+    const assign = getDoubleAssign(court);
+    const pairA = assign.teamA.map(studentNameById);
+    const pairB = assign.teamB.map(studentNameById);
+    const [a1="", a2=""] = pairA;
+    const [b1="", b2=""] = pairB;
+    const block = document.createElement("div");
+    block.className = "court";
+    block.dataset.court = court.id;
+    block.innerHTML = `
+      <div class="courtTop">
+        <div class="name">${escapeHtml(court.name)}</div>
+        <span class="tag">Rotation ${state.doubleRound}</span>
+      </div>
+      <div class="two">
+        <div>
+          <label>Simple 1 (10)</label>
+          <div class="mini">${escapeHtml(a1 || "Joueur A1")} vs ${escapeHtml(b1 || "Joueur B1")}</div>
+          <div class="row">
+            <input type="number" min="0" max="10" placeholder="A" data-phase="s1a" data-court="${court.id}">
+            <input type="number" min="0" max="10" placeholder="B" data-phase="s1b" data-court="${court.id}">
+          </div>
+        </div>
+        <div>
+          <label>Simple 2 (20)</label>
+          <div class="mini">${escapeHtml(a2 || "Joueur A2")} vs ${escapeHtml(b2 || "Joueur B2")} (scores cumulés)</div>
+          <div class="row">
+            <input type="number" min="0" placeholder="A" data-phase="s2a" data-court="${court.id}">
+            <input type="number" min="0" placeholder="B" data-phase="s2b" data-court="${court.id}">
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label>Ronde italienne (>=30, 2 pts écart)</label>
+        <div class="mini">${escapeHtml((pairA && pairA.join(" + ")) || "Équipe A")} vs ${escapeHtml((pairB && pairB.join(" + ")) || "Équipe B")} (scores cumulés)</div>
+        <div class="row">
+          <input type="number" min="0" placeholder="A" data-phase="doba" data-court="${court.id}">
+          <input type="number" min="0" placeholder="B" data-phase="dobb" data-court="${court.id}">
+        </div>
+      </div>
+    `;
+    doubleCourtsEl.appendChild(block);
+  });
+}
+
 function collectMatchData(court, card){
-  const scoreA = Number(card.querySelector(`[data-role="scoreA"][data-court="${court.id}"]`)?.value || "");
-  const scoreB = Number(card.querySelector(`[data-role="scoreB"][data-court="${court.id}"]`)?.value || "");
+  const inputA = card.querySelector(`[data-role="scoreA"][data-court="${court.id}"]`);
+  const inputB = card.querySelector(`[data-role="scoreB"][data-court="${court.id}"]`);
+  const scoreA = Number(inputA ? inputA.value : "");
+  const scoreB = Number(inputB ? inputB.value : "");
   if(!Number.isFinite(scoreA) || !Number.isFinite(scoreB)){
     throw new Error(`Scores invalides sur ${court.name}`);
   }
@@ -1009,6 +1301,58 @@ function collectMatchData(court, card){
     throw new Error(`Répartition incomplète sur ${court.name}`);
   }
   return {teamA:[...assign.teamA], teamB:[...assign.teamB], scoreA:scoreA|0, scoreB:scoreB|0, umpire:assign.umpire};
+}
+
+function collectDoubleMatch(court, block){
+  const assign = getDoubleAssign(court);
+  if(assign.teamA.length<2 || assign.teamB.length<2){
+    throw new Error(`Paires incomplètes sur ${court.name}`);
+  }
+  const read = phase => {
+    const input = block.querySelector(`[data-phase="${phase}"][data-court="${court.id}"]`);
+    const raw = input ? input.value.trim() : "";
+    if(!raw && raw !== "0"){
+      throw new Error(`Complète les scores sur ${court.name}`);
+    }
+    const num = Number(raw);
+    if(!Number.isFinite(num)){
+      throw new Error(`Score invalide sur ${court.name}`);
+    }
+    return num;
+  };
+  const val = phase => read(phase);
+  const s1a = val("s1a");
+  const s1b = val("s1b");
+  const s2a = val("s2a");
+  const s2b = val("s2b");
+  const doba = val("doba");
+  const dobb = val("dobb");
+  if(!Number.isFinite(s1a) || !Number.isFinite(s1b) || !Number.isFinite(s2a) || !Number.isFinite(s2b) || !Number.isFinite(doba) || !Number.isFinite(dobb)){
+    throw new Error(`Scores invalides sur ${court.name}`);
+  }
+  if(Math.max(s1a, s1b) !== 10){
+    throw new Error(`Simple 1 doit se terminer à 10 sur ${court.name}`);
+  }
+  if(s2a < s1a || s2b < s1b || Math.max(s2a, s2b) !== 20){
+    throw new Error(`Simple 2 doit poursuivre jusqu’à 20 (cumul) sur ${court.name}`);
+  }
+  const doubleTarget = Math.max(doba, dobb);
+  if(doubleTarget < 30){
+    throw new Error(`La ronde italienne doit atteindre au moins 30 points sur ${court.name}`);
+  }
+  if(Math.abs(doba - dobb) < 2){
+    throw new Error(`La ronde italienne doit se terminer avec 2 points d’écart sur ${court.name}`);
+  }
+  if(doba < s2a || dobb < s2b){
+    throw new Error(`La ronde italienne doit reprendre les scores cumulés de ${court.name}`);
+  }
+  return {
+    simple1:{a:s1a,b:s1b},
+    simple2:{a:s2a,b:s2b},
+    double:{a:doba,b:dobb},
+    pairA:[...assign.teamA],
+    pairB:[...assign.teamB]
+  };
 }
 
 btnSaveMatches.addEventListener("click", ()=>{
@@ -1021,8 +1365,10 @@ btnSaveMatches.addEventListener("click", ()=>{
     state.courts.forEach(court=>{
       const card = courtsLive.querySelector(`[data-court="${court.id}"]`);
       if(!card) return;
-      const scoreA = card.querySelector(`[data-role="scoreA"][data-court="${court.id}"]`)?.value.trim();
-      const scoreB = card.querySelector(`[data-role="scoreB"][data-court="${court.id}"]`)?.value.trim();
+      const inputA = card.querySelector(`[data-role="scoreA"][data-court="${court.id}"]`);
+      const inputB = card.querySelector(`[data-role="scoreB"][data-court="${court.id}"]`);
+      const scoreA = inputA ? inputA.value.trim() : "";
+      const scoreB = inputB ? inputB.value.trim() : "";
       if(!scoreA && !scoreB) return;
       payloads.push({court, card, data:collectMatchData(court, card)});
     });
@@ -1304,6 +1650,36 @@ function renderResults(){
   });
 }
 
+function renderDoubleResults(){
+  if(!doubleResultsEl){
+    return;
+  }
+  if(state.doubleMatches.length===0){
+    doubleResultsEl.innerHTML = `<div class="muted">Aucun match de ronde italienne pour l’instant.</div>`;
+    return;
+  }
+  const rows = state.doubleMatches.slice().sort((a,b)=>b.ts-a.ts);
+  const header = `<table class="table"><thead><tr><th>Rot.</th><th>Terrain</th><th>Simple 1</th><th>Simple 2</th><th>Ronde italienne</th></tr></thead><tbody>`;
+  const body = rows.map(match=>{
+    const court = state.courts.find(c=>c.id===match.courtId);
+    const pairAList = (match.pairA || []).map(studentNameById);
+    const pairBList = (match.pairB || []).map(studentNameById);
+    const [a1,a2] = pairAList;
+    const [b1,b2] = pairBList;
+    const s1 = `${escapeHtml(a1||"")} vs ${escapeHtml(b1||"")} — ${match.simple1.a}-${match.simple1.b}`;
+    const s2 = `${escapeHtml(a2||"")} vs ${escapeHtml(b2||"")} — ${match.simple2.a}-${match.simple2.b}`;
+    const dbl = `${escapeHtml(pairAList.join(" + ")||"")} vs ${escapeHtml(pairBList.join(" + ")||"")} — ${match.double.a}-${match.double.b}`;
+    return `<tr>
+      <td class="rank">${match.round}</td>
+      <td>${escapeHtml(court ? court.name : "Terrain")}</td>
+      <td>${s1}</td>
+      <td>${s2}</td>
+      <td>${dbl}</td>
+    </tr>`;
+  }).join("");
+  doubleResultsEl.innerHTML = header + body + "</tbody></table>";
+}
+
 function openPlayerModal(row){
   const { rating, stats, history } = computeRatings();
   const stat = stats.get(row.id) || {w:0,l:0,pf:0,pa:0};
@@ -1330,13 +1706,14 @@ function openPlayerModal(row){
       const myScore = isA ? m.scoreA : m.scoreB;
       const opScore = isA ? m.scoreB : m.scoreA;
       const win = myScore > opScore;
-      const courtName = state.courts.find(c=>c.id===m.courtId)?.name || "Terrain";
+    const matchCourt = state.courts.find(c=>c.id===m.courtId);
+    const courtName = matchCourt ? matchCourt.name : "Terrain";
       return `
         <div class="court modalMatch">
           <div class="courtTop">
             <div class="name">${escapeHtml(courtName)}</div>
             <span class="tag">Rot. ${m.round}</span>
-            <span class="tag">${m.mode==="D"?"Double":"Simple"}</span>
+            <span class="tag">${m.mode==="D"?"Ronde italienne":"Simple"}</span>
           </div>
           <div>${escapeHtml(aNames)} vs ${escapeHtml(bNames)}</div>
           <div class="hint" style="margin-top:6px">${win?"Victoire":"Défaite"} — ${myScore}-${opScore}</div>
@@ -1409,7 +1786,8 @@ document.getElementById("btnExport").addEventListener("click", ()=>{
 
   const matchesRows = [["tournament","match_id","timestamp","round","court","mode","umpire","teamA","teamB","scoreA","scoreB"]];
   state.matches.forEach(m=>{
-    const courtName = state.courts.find(c=>c.id===m.courtId)?.name || "";
+    const courtEntry = state.courts.find(c=>c.id===m.courtId);
+    const courtName = courtEntry ? courtEntry.name : "";
     const teamA = m.teamA.map(studentNameById).join(" + ");
     const teamB = m.teamB.map(studentNameById).join(" + ");
     matchesRows.push([
@@ -1418,7 +1796,7 @@ document.getElementById("btnExport").addEventListener("click", ()=>{
       new Date(m.ts).toISOString(),
       m.round,
       courtName,
-      m.mode==="D" ? "double" : "simple",
+      m.mode==="D" ? "ronde italienne" : "simple",
       m.umpire ? "avec arbitre" : "sans arbitre",
       teamA,
       teamB,
@@ -1446,6 +1824,87 @@ document.getElementById("btnExport").addEventListener("click", ()=>{
   downloadCSV("bilan.csv", bilanRows);
   toast("CSV exportés");
 });
+
+if(btnDoubleExport){
+  btnDoubleExport.addEventListener("click", ()=>{
+    if(state.doubleMatches.length===0){
+      alert("Aucun match de ronde italienne");
+      return;
+    }
+    const rows = [["tournament","match_id","round","court","simple1","simple2","ronde_italienne","pairA","pairB"]];
+    state.doubleMatches.forEach(m=>{
+      const courtEntry = state.courts.find(c=>c.id===m.courtId);
+      const courtName = courtEntry ? courtEntry.name : "";
+      const pairA = m.pairA.map(studentNameById).join(" + ");
+      const pairB = m.pairB.map(studentNameById).join(" + ");
+      const simple1 = `${studentNameById(m.pairA[0])} vs ${studentNameById(m.pairB[0])} ${m.simple1.a}-${m.simple1.b}`;
+      const simple2 = `${studentNameById(m.pairA[1])} vs ${studentNameById(m.pairB[1])} ${m.simple2.a}-${m.simple2.b}`;
+      const dbl = `${pairA} vs ${pairB} ${m.double.a}-${m.double.b}`;
+      rows.push([state.tournamentName, m.id, m.round, courtName, simple1, simple2, dbl, pairA, pairB]);
+    });
+    downloadCSV("ronde-italienne.csv", rows);
+    toast("CSV ronde italienne exporté");
+  });
+}
+if(btnDoubleSaveMatches && doubleCourtsEl){
+  btnDoubleSaveMatches.addEventListener("click", ()=>{
+    if(state.courts.length===0){
+      alert("Aucun terrain configuré");
+      return;
+    }
+    const payloads = [];
+    try{
+      state.courts.forEach(court=>{
+        const block = doubleCourtsEl.querySelector(`[data-court="${court.id}"]`);
+        if(!block) return;
+        const hasValue = ["s1a","s1b","s2a","s2b","doba","dobb"].some(phase=>{
+          const input = block.querySelector(`[data-phase="${phase}"][data-court="${court.id}"]`);
+          return input && input.value.trim() !== "";
+        });
+        if(!hasValue) return;
+        const data = collectDoubleMatch(court, block);
+        payloads.push({court, block, data});
+      });
+    }catch(err){
+      alert(err.message);
+      return;
+    }
+    if(payloads.length===0){
+      toast("Aucun score saisi");
+      return;
+    }
+    payloads.forEach(({court, block, data})=>{
+      state.doubleMatches.push({
+        id: uid("dm"),
+        ts: Date.now(),
+        courtId: court.id,
+        round: state.doubleRound,
+        pairA: data.pairA,
+        pairB: data.pairB,
+        simple1: data.simple1,
+        simple2: data.simple2,
+        double: data.double
+      });
+      ["s1a","s1b","s2a","s2b","doba","dobb"].forEach(phase=>{
+        const input = block.querySelector(`[data-phase="${phase}"][data-court="${court.id}"]`);
+        if(input) input.value = "";
+      });
+    });
+    saveState();
+    toast("Rotation ronde italienne enregistrée");
+  });
+}
+
+if(btnDoubleRotation){
+  btnDoubleRotation.addEventListener("click", ()=>{
+    const next = computeNextDoubleAssignments();
+    if(!next) return;
+    state.doubleAssignments = next;
+    state.doubleRound += 1;
+    saveState();
+    toast("Rotation ronde italienne prête");
+  });
+}
 function downloadCSV(filename, rows){
   const csv = rows.map(r=>r.map(csvEscape).join(",")).join("\n");
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
@@ -1470,6 +1929,18 @@ function csvEscape(value){
 
 /** ===== NAV + Modes ===== */
 const navButtons = document.querySelectorAll(".navBtn");
+const navEl = document.querySelector(".nav");
+
+function adjustNavPadding(){
+  if(!navEl) return;
+  const navHeight = navEl.offsetHeight || 0;
+  const buffer = Math.max(120, navHeight + 24);
+  document.documentElement.style.setProperty("--app-padding-bottom", `${buffer}px`);
+}
+window.addEventListener("resize", adjustNavPadding);
+window.addEventListener("orientationchange", adjustNavPadding);
+adjustNavPadding();
+
 navButtons.forEach(btn=>{
   btn.addEventListener("click", ()=>{
     navButtons.forEach(b=>b.classList.remove("active"));
@@ -1479,7 +1950,7 @@ navButtons.forEach(btn=>{
 });
 
 function showPage(name){
-  ["home","setup","assign","matches","results"].forEach(p=>{
+  ["home","setup","assign","matches","results","doubles"].forEach(p=>{
     document.getElementById(`page-${p}`).style.display = (p===name)?"":"none";
   });
   navButtons.forEach(btn=>{
@@ -1504,6 +1975,13 @@ document.getElementById("btnResetAll").addEventListener("click", ()=>{
 document.getElementById("btnInstallTip").addEventListener("click", ()=>{
   alert("iPad : Safari → Partager → “Sur l’écran d’accueil”. L’application fonctionne hors-ligne.");
 });
+if(btnOpenDoubleTab){
+  btnOpenDoubleTab.addEventListener("click", ()=>{
+    const url = new URL(window.location.href);
+    url.hash = "doubles";
+    window.open(url.toString(), "_blank");
+  });
+}
 
 /** ===== Render ===== */
 function escapeHtml(str){
@@ -1537,9 +2015,17 @@ function renderAll(){
   if(document.getElementById("page-results").style.display !== "none"){
     renderResults();
   }
+  if(document.getElementById("page-doubles").style.display !== "none"){
+    renderDoubleAssignments();
+    renderDoubleCourts();
+    renderDoubleResults();
+  }
 }
-
 renderAll();
+const initialHash = window.location.hash.replace("#","");
+if(initialHash && ["home","setup","assign","matches","results","doubles"].includes(initialHash)){
+  showPage(initialHash);
+}
 </script>
 </body>
 </html>
